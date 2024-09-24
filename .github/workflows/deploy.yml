@@ -9,6 +9,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
+
     steps:
     # Step 1: Check out the latest code from the main branch
     - name: Checkout code
@@ -24,14 +27,6 @@ jobs:
         passphrase: ''
         script: |
           cd ~/yousound # Go to the app directory on the server
-
-          # Install Node.js 20.x if not already installed
-          curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-          sudo apt-get install -y nodejs
-          
-          # Check the installed Node.js and npm versions
-          node -v
-          npm -v
           
           # Pull the latest changes from the main branch
           git pull origin main
