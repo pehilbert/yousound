@@ -16,7 +16,7 @@ Navigate to the `frontend` and `server` directories and run the same command.
 Now, navigate back to the root directory.
 
 Before running the app, you will need to set the environment mode. To do this, run either `npm run set-dev` or `npm run set-prod` for
-development and production mode respectively.
+development and production mode respectively. You can also just run `npm run dev` or `npm run prod`.
 
 In development mode, it will run the React app on a test server on port 3000, and the main server separately on port 5000. When ran, a browser window should open
 automatically, but if not, the app can be accessed via http://localhost:3000 (or the actual URL to the server)
