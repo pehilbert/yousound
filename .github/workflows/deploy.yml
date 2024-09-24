@@ -9,9 +9,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
-
     steps:
     # Step 1: Check out the latest code from the main branch
     - name: Checkout code
@@ -26,20 +23,5 @@ jobs:
         key: ${{ secrets.HOSTWINDS_SSH_KEY }}
         passphrase: ''
         script: |
-          cd ~/yousound # Go to the app directory on the server
-          
-          # Pull the latest changes from the main branch
-          git pull origin main
-          
-          # Install dependencies (main folder or subfolders if needed)
-          npm install
-
-          # Optional: If you have separate package.json files for frontend and server
-          cd frontend
-          npm install
-          cd ../server
-          npm install
-          cd ..
-
-          # Start or restart the app in production mode with PM2
-          pm2 start npm --name "yousound" -- start --env production || pm2 restart "yousound"
+          cd ~/yousound
+          ./run_prod.sh
