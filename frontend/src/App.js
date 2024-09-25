@@ -1,20 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Layout from "./layout/Layout.js";
+import HomePage from "./home/HomePage.js";
+import SignIn from "./account_pages/SignIn.js";
+import SignUp from "./account_pages/SignUp.js";
+import Community from "./community_page/Community.js";
+import UploadSong from "./upload/UploadSong.js";
+
+import "./App.css";
 
 function App() {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    fetch('/api')
-      .then((res) => res.json())
-      .then((data) => setData(data.message))
-      .catch((error) => console.error('Error fetching data:', error));
-  }, []);
-
-  return (
-    <div className="App">
-      <h1>{data ? data : 'Loading...'}</h1>
-    </div>
-  );
+    return (
+        <div className="App">
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<Layout />}>
+                        <Route index element={<HomePage />}/>
+                        <Route path="/signin" element={<SignIn />}/>
+                        <Route path="/signup" element={<SignUp />}/>
+                        <Route path="/community" element={<Community />}/>
+                        <Route path="/upload" element={<UploadSong />}/>
+                    </Route>
+                </Routes>
+            </BrowserRouter>
+        </div>
+    );
 }
 
 export default App;
