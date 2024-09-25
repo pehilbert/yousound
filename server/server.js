@@ -10,7 +10,7 @@ app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 // Define your API routes here
 app.get('/api', (req, res) => {
-    res.json({ message: 'Hello from the server!' });
+    res.json({ message: 'Test message from server' });
 });
 
 // For any other route, serve the React app
