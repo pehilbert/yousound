@@ -1,17 +1,16 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-const port = process.env.PORT || 5000;
+const port = 5000;
+const api = require("./api/api-main");
 
 app.use(express.json());
 
 // Serve the static files from the React app
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 
-// Define your API routes here
-app.get('/api', (req, res) => {
-    res.json({ message: 'Test message from server' });
-});
+// Initialize API routes
+api.initialize(app);
 
 // For any other route, serve the React app
 app.get('*', (req, res) => {
