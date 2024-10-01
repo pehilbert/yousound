@@ -1,11 +1,15 @@
-require("dotenv").config();
-
 const express = require('express');
 const path = require('path');
 const app = express();
-const port = process.env.SERVER_PORT;
+const cors = require('cors');
 const api = require("./api/api-main");
 const {connectToMongo} = require("./database/database-util");
+
+require("dotenv").config({ path: path.resolve(__dirname, './.env') });
+const port = process.env.SERVER_PORT;
+
+// Enable CORS for all origins
+app.use(cors());
 
 // Make app able to parse JSON
 app.use(express.json());

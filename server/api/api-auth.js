@@ -1,12 +1,13 @@
 const dbUtil = require("../database/database-util")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
-require("dotenv").config();
-const SECRET_KEY = process.env.JWT_SECRET_KEY;
+const path = require("path");
 
 module.exports = {
     initialize : (app) => {
+        require("dotenv").config({ path: path.resolve(__dirname, '../.env') });
+        const SECRET_KEY = process.env.JWT_SECRET_KEY;
+
         /*
         Endpoint: POST /api/auth/login
         Description: Attempts to log a user in with the given credentials
@@ -32,7 +33,9 @@ module.exports = {
 
                 if (user && user.password && bcrypt.compareSync(req.body.password, user.password)) {
                     let token = jwt.sign({id : user._id}, SECRET_KEY, {expiresIn : "1h"});
-                    res.status(200).send({message : "Login successful!", token, id : user._id});
+                    let stringID = user._id.toString();
+
+                    res.status(200).send({message : "Login successful!", token, id : stringID});
                 } else {
                     res.status(401).send({message : "Username or password was incorrect"});
                 }

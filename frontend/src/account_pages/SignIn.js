@@ -1,16 +1,36 @@
-import React, {useState} from 'react';
-import {Link} from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {useAuth} from "../AuthContext";
+import {Link, useNavigate} from 'react-router-dom';
 import "./Forms.css";
 
 function SignIn() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [resultMessage, setResultMessage] = useState("");
+    const authContext = useAuth();
+    const navigate = useNavigate();
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        setResultMessage("Sign In coming soon!");
+        
+        let loginResult = await authContext.login(username, password);
+
+        if (loginResult) {
+            setResultMessage(loginResult.data.message);
+
+            if (loginResult.status === 200) {
+                navigate("/");
+            }
+        } else {
+            setResultMessage("There was an error logging in");
+        }
     }
+
+    useEffect(() => {
+        if (authContext.authToken) {
+            navigate("/");
+        }
+    });
 
     return (
         <div className="SignIn">

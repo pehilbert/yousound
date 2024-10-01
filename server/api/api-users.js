@@ -1,5 +1,12 @@
+const dbUtil = require("../database/database-util");
+const bcrypt = require("bcrypt");
+const path = require("path");
+
 module.exports = {
     initialize : (app) => {
+        require("dotenv").config({ path: path.resolve(__dirname, '../.env') });
+        const SALT_ROUNDS = process.env.SALT_ROUNDS;
+
         /*
         Endpoint: POST /api/users/create
         Description: Creates a new user in the database and responds with
@@ -31,7 +38,7 @@ module.exports = {
                 }
 
             try {
-                let hashedPassword = await bcrypt.hash(req.body.password, SALT_ROUNDS);
+                let hashedPassword = await bcrypt.hash(req.body.password, parseInt(SALT_ROUNDS));
 
                 let result = await dbUtil.createDocument("users", {
                     ...req.body,
