@@ -24,4 +24,8 @@ automatically, but if not, the app can be accessed via http://localhost:3000 (or
 In production mode, it will build the React app into static content, which the main server will serve directly, running on on port 5000. The app can be accessed
 via http://localhost:5000 (or the actual URL to the server)
 
-Once the environment mode is set, run `npm start` in the root directory to run the app.
+You will also have to set the environment variables for both the frontend and server. To do this, copy the ".env-template" files in both directories and rename them to ".env". Set all
+the required fields to what they need to be. If they are already filled in, there is mostly no need to chnage them, but be sure to fill in the ones that are left blank. These
+tend to be the more sensitive fields, and of course, they are required in order for the app to work.
+
+Once everything is set, run `npm start` in the root directory to run the app. (Or, again, you can just run `npm run` and then `dev` or `prod`)
