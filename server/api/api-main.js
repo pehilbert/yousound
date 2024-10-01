@@ -8,7 +8,7 @@ module.exports = {
     initialize : (app) => {
         // Initialize test route
         app.get('/api', (req, res) => {
-            res.json({ message: 'Test message from server' });
+            res.status(200).send({ message: 'Test message from server' });
         });
 
         // Initialize other API routes

@@ -11,9 +11,10 @@ const AuthContext = createContext({
 const AuthProvider = ({children}) => {
     const [authToken, setAuthToken] = useState(null);
     const [id, setId] = useState(null);
-    const ENDPOINT = "http://localhost:5000";
+    const ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
 
     const login = async (username, password) => {
+        console.log("ENDPOINT = " + ENDPOINT);
         try {
             let response = await axios.post(ENDPOINT + "/api/auth/login", {username, password});
 

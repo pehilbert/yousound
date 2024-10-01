@@ -13,7 +13,7 @@ function SignUp() {
     const navigate = useNavigate();
     const authContext = useAuth();
 
-    const ENDPOINT = "http://localhost:5000";
+    const ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
 
     const handleSubmit = async (event) => {
         event.preventDefault();
