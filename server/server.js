@@ -1,22 +1,43 @@
+require("dotenv").config();
+
 const express = require('express');
 const path = require('path');
 const app = express();
-const port = 5000;
+const port = process.env.SERVER_PORT;
 const api = require("./api/api-main");
+const {connectToMongo} = require("./database/database-util");
 
+// Make app able to parse JSON
 app.use(express.json());
 
 // Serve the static files from the React app
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 
-// Initialize API routes
-api.initialize(app);
+// Test database connection
+console.log("Testing database connection...");
 
-// For any other route, serve the React app
-app.get('*', (req, res) => {
-    res.sendFile(path.join(path.join(__dirname, '../frontend/build'), 'index.html'));
-});
+connectToMongo()
+    .then(client => {
+        console.log("Connected to database!");
+        client.close();
+        
+        /* If all is good with the database, initialize the server and run it */
 
-app.listen(port, '0.0.0.0', () => {
-    console.log(`Server running on http://localhost:${port}`);
-});
+        // Initialize API routes
+        console.log("\nInitializing API...");
+        api.initialize(app);
+
+        // For any other route, serve the React app
+        app.get('*', (req, res) => {
+            res.sendFile(path.join(path.join(__dirname, '../frontend/build'), 'index.html'));
+        });
+
+        // Start server
+        app.listen(port, '0.0.0.0', () => {
+            console.log(`\nServer running on port ${port}`);
+        });
+    })
+    .catch(error => {
+        console.error("Error connecting to database:", error);
+        throw error;
+    });
