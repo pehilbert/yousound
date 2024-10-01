@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "concurrently": "^9.0.1",
-    "create-react-app": "^5.0.1"
+    "create-react-app": "^5.0.1",
+    "path": "^0.12.7"
   },
   "scripts": {
     "start": "npm run check-env",

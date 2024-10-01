@@ -1,6 +1,8 @@
-import React, {useState} from 'react';
-import {Link} from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {useAuth} from "../AuthContext";
+import {Link, useNavigate} from 'react-router-dom';
 import "./Forms.css";
+import axios from "axios";
 
 function SignUp() {
     const [email, setEmail] = useState("");
@@ -8,11 +10,50 @@ function SignUp() {
     const [password, setPassword] = useState("");
     const [passwordCopy, setPasswordCopy] = useState("");
     const [resultMessage, setResultMessage] = useState("");
+    const navigate = useNavigate();
+    const authContext = useAuth();
 
-    const handleSubmit = (event) => {
+    const ENDPOINT = "http://localhost:5000";
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        setResultMessage("Sign Up coming soon!");
+
+        if (password !== passwordCopy) {
+            return setResultMessage("Passwords must match!")
+        }
+        
+        await axios.post(ENDPOINT + "/api/users/create", {username, password, email})
+            .then(response => {
+                setResultMessage(response.data.message);
+
+                if (response.status === 201) {
+                    console.log(authContext);
+                    let loginResult = authContext.login(username, password);
+
+                    if (loginResult) {
+                        setResultMessage(loginResult.data.message);
+
+                        if (loginResult.status === 200) {
+                            navigate("/");
+                        }
+                    } else {
+                        setResultMessage("There was an error logging in");
+                    }
+                }
+            })
+            .catch(error => {
+                setResultMessage("An unexpected error occurred");
+                console.error("Error signing up:", error);
+            });
     }
+
+    useEffect(() => {
+        console.log(authContext);
+
+        if (authContext.authToken) {
+            navigate("/");
+        }
+    });
 
     return (
         <div className="SignUp">
