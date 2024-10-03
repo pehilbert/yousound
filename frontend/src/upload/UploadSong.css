@@ -17,6 +17,10 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
+.errorMessage {
+    text-align: center;
+}
+
 .uploadFile span {
     font-weight: bold;              /* Make the label bold */
     margin-bottom: 10px;            /* Add space below the label */
