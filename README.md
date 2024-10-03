@@ -24,8 +24,6 @@ automatically, but if not, the app can be accessed via http://localhost:3000 (or
 In production mode, it will build the React app into static content, which the main server will serve directly, running on on port 5000. The app can be accessed
 via http://localhost:5000 (or the actual URL to the server)
 
-### Mongodb Server Set Up
-
 The current version of mongodb we are using is 6.0.17. Make sure to install mongobd as well as the mongodb dotenv dependency. Then create a database for instance my name is yousound the command is 'use yousound'. You must then run the command 'mongosh' and 'db.mycollection.insertOne({ name: "example", type: "demo" })' the second command is necessary to write to establish the database and tell mongo that this database "can be used".
 
  **Example Of Database Setup**
