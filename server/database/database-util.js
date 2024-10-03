@@ -18,7 +18,9 @@ module.exports = {
     */
     connectToMongo : async () => {
         return await MongoClient.connect(DB_URI);
+        
     },
+
 
     /*
     Performs functionality on a given collection defined by the given callback function,
