@@ -1,18 +1,27 @@
 import "./UploadSong.css";
-import React, { useState , useRef  } from 'react';
+import React, { useState, useEffect, useRef  } from 'react';
+import {useAuth} from "../AuthContext";
 
 function UploadSong() {
 
-    // todo
-    // need to check if user is signed 
-        // if user not signed in input on page that user is not signed in
-        // redirect to login page
+    const { authToken } = useAuth();
+    const [errorMessage, setErrorMessage] = useState('');
+    console.log(authToken);
 
-
+    
     // state to store a selected file
     const [selectedFile, setSelectedFile] = useState(null);
     const [songTitle, setSongTitle] = useState('');
     const [songDescription, setDescription] = useState('');
+
+    // Effect to set error message based on authToken
+    useEffect(() => {
+        if (authToken === null) {
+            setErrorMessage("You are not signed in. Please log in to upload a song.");
+        } else {
+            setErrorMessage(''); // Clear error message if signed in
+        }
+    }, [authToken]); // Dependency on authToken
 
     // ref for file input
     const fileInputRef = useRef(null);
@@ -67,6 +76,10 @@ function UploadSong() {
 
                 // error has occured try again
         }
+        else if(authToken === null)
+        {
+            alert('you are not signed in so you can not upload a file');
+        }
         else
         {
             alert('please select a file to upload');
@@ -83,11 +96,12 @@ function UploadSong() {
     return (
 
         <>
-            <div class="UploadSong">
+            <div className="UploadSong">
                 <h1>Please Enter A Song To Upload</h1>
             </div>
             <br></br>
-            <div class="uploadFile">
+            {!authToken && <p className="errorMessage" style={{ color: 'red' }}>{errorMessage}</p>} {/* Display error message */}
+            <div className="uploadFile">
                 <span>Enter Song Name </span>
                 <input
                     type="text" 
