@@ -1,6 +1,20 @@
 const dbUtil = require("../database/database-util");
+const http = require('http');
 const bcrypt = require("bcrypt");
 const path = require("path");
+const multer = require('multer');
+
+// configure multer for files
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/'); // Directory where files will be stored
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname)); // Append timestamp to file name
+    }
+});
+
+const upload = multer({ storage: storage });
 
 module.exports = {
     initialize : (app) => {
@@ -27,7 +41,7 @@ module.exports = {
         500 - Server Error
             {message}
         */
-        app.post("/api/users/create", async (req, res) => {
+        app.post("/api/users/create",upload.single('selectedFile'), async (req, res) => {
             if (!req.body.username || 
                 !req.body.password || 
                 !req.body.email) {
@@ -120,6 +134,60 @@ module.exports = {
                     message : "Server Error"
                 });
             }
+        });
+
+        /*
+        Endpoint: POST /api/songs/create
+        Description: Creates a new song for a user will respond with the song
+        id if successfull
+        Authentication: None
+
+        Expected request body: {
+            email, 
+            userName,
+            songTitle,
+            songFile,
+            other values are optional
+        }
+        Status codes and responses:
+        201 - Success 
+            {message, song_id}
+        400 - Song name already exists
+            {message}
+        401 - Incorrect File ty
+            {message}
+        500 - Server Error
+            {message}
+        */
+        app.post("/api/songs/create", async (req, res) => {
+            if (!req.body.id || 
+                !req.body.songTitle || 
+                !req.body.songDescription) 
+            {
+                console.log("Not all values provided in body: " + req.body);
+                return res.status(401).send({
+                        message : "Missing required value(s)"
+                });
+            }
+
+            const file = req.body.selectedFile;
+            if (!file) 
+            {
+                console.log("402");
+                return res.status(402).send({ message: "No file uploaded" });
+            }
+            else if(file.mimetype === 'audio/mpeg' || file.mimetype === 'audio/mp3')
+            {
+                console.log("403");
+                return res.status(403).send({ message: "Improperfile was uploaded" });
+            }
+
+            console.log("working");
+
+            return res.status(201).send({
+                    message : "User successfully created!"
+            });
+        
         });
         
         console.log("Users API routes initialized");
