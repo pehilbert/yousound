@@ -1,12 +1,15 @@
 import "./UploadSong.css";
 import React, { useState, useEffect, useRef  } from 'react';
 import {useAuth} from "../AuthContext";
+import axios from "axios";
 
 function UploadSong() {
+    const ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
 
-    const { authToken } = useAuth();
+    const { authToken, id } = useAuth();
     const [errorMessage, setErrorMessage] = useState('');
     console.log(authToken);
+    console.log(id);
 
     
     // state to store a selected file
@@ -21,7 +24,7 @@ function UploadSong() {
         } else {
             setErrorMessage(''); // Clear error message if signed in
         }
-    }, [authToken]); // Dependency on authToken
+    }, [authToken]); 
 
     // ref for file input
     const fileInputRef = useRef(null);
@@ -41,14 +44,12 @@ function UploadSong() {
         setSelectedFile(event.target.files[0]);
     };
 
-    const handleFileUpload = () => {
+
+    const handleFileUpload = async () => {
         if(selectedFile && songTitle)
         {
-            const formData = new FormData();
-            formData.append('file', selectedFile);
-            formData.append('title', songTitle);
-            formData.append('description', songDescription);
             // TODO : add an append data for user 
+
             // TODO : add an append data for the users
 
             
@@ -58,14 +59,11 @@ function UploadSong() {
             console.log('Song title: ', songTitle);
             console.log('Song Description: ', songDescription);
 
-            // temperary clear fields
-            clearInputs();
-            fileInputRef.current.value = null;
-            alert('File successfully uploaded!');
 
             // TODO 
+            const response = await axios.post(ENDPOINT + "/api/songs/create", {id,songTitle,songDescription,selectedFile});
+            console.log(response);
 
-            // file upload use case will occur here
 
             // check if file is uploaded properly
 
@@ -75,6 +73,12 @@ function UploadSong() {
             // else
 
                 // error has occured try again
+
+
+            // temperary clear fields
+            clearInputs();
+            fileInputRef.current.value = null;
+            alert('File successfully uploaded!');
         }
         else if(authToken === null)
         {

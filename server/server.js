@@ -6,7 +6,8 @@ const api = require("./api/api-main");
 const {connectToMongo} = require("./database/database-util");
 
 require("dotenv").config({ path: path.resolve(__dirname, './.env') });
-const port = process.env.SERVER_PORT;
+port = 5000;
+//const port = process.env.SERVER_PORT;
 
 // Enable CORS for all origins
 app.use(cors());
