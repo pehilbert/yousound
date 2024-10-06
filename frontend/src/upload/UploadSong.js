@@ -51,34 +51,31 @@ function UploadSong() {
             // TODO : add an append data for user 
 
             // TODO : add an append data for the users
+            const formData = new FormData();
+            formData.append('id', id); // Add the user ID
+            formData.append('songTitle', songTitle); // Add the song title
+            formData.append('songDescription', songDescription); // Add the song description
+            formData.append('selectedFile', selectedFile);
 
-            
-            
             // temp for upload use
-            console.log('Uploaded file: ', selectedFile);
-            console.log('Song title: ', songTitle);
-            console.log('Song Description: ', songDescription);
-
+            console.log('Form Data:', formData);
 
             // TODO 
-            const response = await axios.post(ENDPOINT + "/api/songs/create", {id,songTitle,songDescription,selectedFile});
-            console.log(response);
+            try {
+                const response = await axios.post(ENDPOINT + "/api/songs/create", formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data', // Set the proper content type
+                    },
+                });
+                console.log('Upload response:', response.data);
+                clearInputs();
+                fileInputRef.current.value = null;
+                alert('File successfully uploaded!'); 
+            } catch (error) {
+                console.error('Error uploading song:', error);
+                alert('Error uploading file. Please try again.'); // Notify the user of the error
+            }
 
-
-            // check if file is uploaded properly
-
-                // clear fields
-                // pop up that file was successfully uploaded
-                
-            // else
-
-                // error has occured try again
-
-
-            // temperary clear fields
-            clearInputs();
-            fileInputRef.current.value = null;
-            alert('File successfully uploaded!');
         }
         else if(authToken === null)
         {

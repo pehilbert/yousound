@@ -4,6 +4,8 @@
 
 const {MongoClient} = require("mongodb");
 const path = require("path");
+const fs = require('fs');
+const { GridFSBucket } = require('mongodb');
 require("dotenv").config({ path: path.resolve(__dirname, '../.env') });
 
 const DB_URI = process.env.DB_URI;
@@ -118,5 +120,43 @@ module.exports = {
         return await module.exports.performOperation(collectionName, async (collection) => {
             return await collection.deleteMany(filter);
         })
+    },
+
+
+    /*
+    Creates a document in a collection given an object with values, returns the
+    inserted ID, or throws an error if unable to insert.
+    Also uploads an MP3 file to GridFS.
+    */
+    createMp3Document: async (collectionName, toInsert, filePath) => {
+        const client = await module.exports.connectToMongo();
+        const db = client.db(DB_NAME);
+        const bucket = new GridFSBucket(db, { bucketName: 'songs' }); // GridFS bucket for MP3 files
+    
+    
+        if (filePath) 
+        {
+            const uploadStream = bucket.openUploadStream(toInsert.title + '.mp3'); // Use the song title for naming
+            const fileStream = fs.createReadStream(filePath);
+    
+            // Upload MP3 file to GridFS
+            await new Promise((resolve, reject) => {
+                fileStream.pipe(uploadStream)
+                    .on('error', (error) => {
+                        reject(error); // Throw error if upload fails
+                    })
+                    .on('finish', () => {
+                        toInsert.songId = uploadStream.id; // Store the GridFS file ID in the metadata
+                        resolve();
+                    });
+            });
+        }
+    
+        // Insert song metadata (including songId) into the collection
+        const collection = db.collection(collectionName);
+        let result = await collection.insertOne(toInsert);
+        await client.close();
+        return result.insertedId;
     }
+    
 }

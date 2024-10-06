@@ -11,6 +11,7 @@ module.exports = {
             res.status(200).send({ message: 'Test message from server' });
         });
 
+        
         // Initialize other API routes
         auth.initialize(app);
         users.initialize(app);
