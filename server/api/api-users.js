@@ -1,20 +1,32 @@
 const dbUtil = require("../database/database-util");
-const http = require('http');
 const bcrypt = require("bcrypt");
 const path = require("path");
 const multer = require('multer');
+const express = require('express');
+const { ObjectId } = require('mongodb');
+const fs = require('fs');
 
-// configure multer for files
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/'); // Directory where files will be stored
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname)); // Append timestamp to file name
+    destination: './uploads/',
+    filename: function(req, file, cb) {
+      cb(null, file.originalname);
     }
 });
-
-const upload = multer({ storage: storage });
+  
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 50 * 1024 * 1024 },
+    fileFilter: function(req, file, cb) {
+      // Allow only certain mime types
+      const allowedMimeTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg'];
+      if (allowedMimeTypes.includes(file.mimetype)) {
+        cb(null, true);
+      } else {
+        cb(null, false);
+        return cb(new Error('Only audio files are allowed'));
+      }
+    }
+  });
 
 module.exports = {
     initialize : (app) => {
@@ -50,6 +62,7 @@ module.exports = {
                         message : "Missing required value(s)"
                     });
                 }
+                
 
             try {
                 let hashedPassword = await bcrypt.hash(req.body.password, parseInt(SALT_ROUNDS));
@@ -159,7 +172,12 @@ module.exports = {
         500 - Server Error
             {message}
         */
-        app.post("/api/songs/create", async (req, res) => {
+        app.post("/api/songs/create", upload.single('selectedFile'),async (req, res) => {
+            console.log('Received request to upload song');
+            console.log('Body:', req.body);
+            console.log('File:', req.file);
+            
+
             if (!req.body.id || 
                 !req.body.songTitle || 
                 !req.body.songDescription) 
@@ -169,17 +187,48 @@ module.exports = {
                         message : "Missing required value(s)"
                 });
             }
+            const filePath = req.file.path;
 
-            const file = req.body.selectedFile;
-            if (!file) 
+            const songId = new ObjectId().toString();
+
+            // Create the song document
+            const songDocument = {
+                songId: songId, // You can use a generated songId or pass one
+                userId: req.body.id,
+                title: req.body.songTitle,
+                description: req.body.songDescription, // Optional, defaults to an empty string
+            };  
+
+            try 
             {
-                console.log("402");
-                return res.status(402).send({ message: "No file uploaded" });
-            }
-            else if(file.mimetype === 'audio/mpeg' || file.mimetype === 'audio/mp3')
+                const insertedId = await dbUtil.createMp3Document('songs', songDocument,filePath);
+                console.log(`Song inserted with ID: ${insertedId}`);
+                // Clean up the temporary uploaded file
+                fs.unlink(filePath, (err) => {
+                    if (err) 
+                    {
+                    console.error('Error deleting temporary file:', err);
+                    } 
+                    else 
+                    {
+                    console.log('Temporary file deleted successfully');
+                    }
+                });
+
+            } 
+            catch (error) 
             {
-                console.log("403");
-                return res.status(403).send({ message: "Improperfile was uploaded" });
+                console.error("Error uploading song:", error);
+                fs.unlink(filePath, (err) => {
+                    if (err) 
+                    {
+                    console.error('Error deleting temporary file:', err);
+                    } 
+                    else 
+                    {
+                    console.log('Temporary file deleted successfully');
+                    }
+                });
             }
 
             console.log("working");
