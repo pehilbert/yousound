@@ -8,8 +8,8 @@ function UploadSong() {
 
     const { authToken, id } = useAuth();
     const [errorMessage, setErrorMessage] = useState('');
-    console.log(authToken);
-    console.log(id);
+    //console.log(authToken);
+    //console.log(id);
 
     
     // state to store a selected file
