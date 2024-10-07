@@ -7,6 +7,7 @@ function Community() {
     const ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
     const audioSrc = ENDPOINT + `/api/songs/random`;
 
+
     const [songTitle, setSongTitle] = useState('');
     const [songDescription, setSongDescription] = useState('');
 
@@ -22,10 +23,15 @@ function Community() {
             });
     }, [audioSrc]);
 
-    console.log(songTitle);
+    function getRandom()
+    {
+        window.location.reload()
+    }
+
+    //console.log(songTitle);
 
     return (
-        <div>
+        <div className = "community">
             <h3>Random Community Song</h3>
             <p><strong>Title:</strong> {songTitle}</p>
             <p><strong>Description:</strong> {songDescription}</p>
@@ -33,6 +39,7 @@ function Community() {
                 <source src={audioSrc} type="audio/mpeg" />
                 Your browser does not support the audio element.
             </audio>
+            <button onClick={getRandom}>Random</button>
         </div>
     );
 
