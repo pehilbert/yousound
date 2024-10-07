@@ -139,10 +139,11 @@ module.exports = {
                 metadata: {
                     title: toInsert.title,
                     description: toInsert.description,
-                    filename: toInsert.filename || (toInsert.title + '.mp3') 
+                    filename: toInsert.filename || (toInsert.title + '.mp3') ,
+                    user: toInsert.userId
                 }
             });
-            
+
             const fileStream = fs.createReadStream(filePath);
     
             // Upload MP3 file to GridFS
