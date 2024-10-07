@@ -282,12 +282,15 @@ module.exports = {
 
                 // this is where I need to add song metadata
                 const songMetadata = await dbUtil.getSongMetadataById(randomSong);
-                console.log(songMetadata);
+                //console.log(songMetadata.metadata);
 
                 // set appripriate headers fror mp3 files
                 res.set({
                     'Content-Type': 'audio/mpeg',
                     'Content-Disposition': `attachment; filename="song-${randomSong}.mp3"`,
+                    'X-Song-Title': songMetadata.metadata.title,
+                    'X-Song-Description': songMetadata.metadata.description,
+                    'Access-Control-Expose-Headers': 'X-Song-Title, X-Song-Description',
                 });
 
                 // send song back
