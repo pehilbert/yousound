@@ -2,11 +2,10 @@
 // - Database connection
 // - CRUD Operations
 
-const {MongoClient} = require("mongodb");
 const path = require("path");
 const fs = require('fs');
-const { GridFSBucket } = require('mongodb');
 require("dotenv").config({ path: path.resolve(__dirname, '../.env') });
+const { MongoClient, GridFSBucket, ObjectId } = require('mongodb');
 
 const DB_URI = process.env.DB_URI;
 const DB_NAME = process.env.DB_NAME;
@@ -136,7 +135,14 @@ module.exports = {
     
         if (filePath) 
         {
-            const uploadStream = bucket.openUploadStream(toInsert.title + '.mp3'); // Use the song title for naming
+            const uploadStream = bucket.openUploadStream(toInsert.title + '.mp3', {
+                metadata: {
+                    title: toInsert.title,
+                    description: toInsert.description,
+                    filename: toInsert.filename || (toInsert.title + '.mp3') 
+                }
+            });
+            
             const fileStream = fs.createReadStream(filePath);
     
             // Upload MP3 file to GridFS
@@ -157,6 +163,46 @@ module.exports = {
         let result = await collection.insertOne(toInsert);
         await client.close();
         return result.insertedId;
-    }
+    },
+
+    /*
+    Gets all of the song ids in an array
+    */
+    getAllSongIds: async () => {
+        const client = await module.exports.connectToMongo();
+        const database = client.db('yousound');
+        const songsCollection = database.collection('songs.files');
     
+        // Find only the _id field
+        const songs = await songsCollection.find({}, { projection: { _id: 1 } }).toArray();
+        
+        // Extract and return the IDs in an array
+        return songs.map(songs => songs._id);
+    },
+
+    /*
+    This retrieves the song metadata for a specific songId from GridFS.
+    */
+    getSongMetadataById: async (songId) => {
+        const client = await module.exports.connectToMongo();
+        const db = client.db(DB_NAME);
+        const bucket = new GridFSBucket(db, { bucketName: 'songs' });
+
+        try {
+            // Fetch metadata for the specific songId
+            const songMetadata = await db.collection('songs.files').findOne({ _id: new ObjectId(songId) });
+
+            if (!songMetadata) {
+                throw new Error('Song not found'); 
+            }
+
+            return songMetadata; 
+        } catch (error) {
+            console.error('Error retrieving song metadata by ID:', error);
+            throw new Error('Error retrieving song metadata by ID');
+        } finally {
+            await client.close(); 
+        }
+    }
+            
 }
