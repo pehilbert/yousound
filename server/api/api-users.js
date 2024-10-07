@@ -5,6 +5,9 @@ const multer = require('multer');
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const fs = require('fs');
+const { GridFSBucket } = require('mongodb');
+require("dotenv").config({ path: path.resolve(__dirname, '../.env') });
+const {MongoClient} = require("mongodb");
 
 const storage = multer.diskStorage({
     destination: './uploads/',
@@ -27,6 +30,8 @@ const upload = multer({
       }
     }
   });
+
+const DB_URI = process.env.DB_URI;
 
 module.exports = {
     initialize : (app) => {
@@ -237,6 +242,65 @@ module.exports = {
                     message : "User successfully created!"
             });
         
+        });
+
+         /*
+        Endpoint: GET /api/songs/random
+        Description: Retrieves a random song from all songs
+        and will stream that song to a client
+        Authentication: None
+
+        Expected request body: none
+        Status codes and responses:
+        200 - OK
+            {message, userInfo}
+        404 - Not Found
+            {message}
+        500 - Server Error
+            {message}
+        */
+        app.get("/api/songs/random", async (req, res) => {
+            try {
+
+                // get all songs from a database call
+                const client = await MongoClient.connect(DB_URI);
+                const db = client.db('yousound');
+                const songIds = await dbUtil.getAllSongIds(); 
+                const bucket = new GridFSBucket(db, { bucketName: 'songs' });
+
+                // check if there is more then one song
+                if(!songIds || songIds.length == 0)
+                {
+                    return res.status(404).send({
+                        message: "No songsIds found"
+                    });
+                }
+
+                // get a random song from song lenth
+                const randomIndex = Math.floor(Math.random() * songIds.length);
+                const randomSong = songIds[randomIndex];
+
+                // this is where I need to add song metadata
+                const songMetadata = await dbUtil.getSongMetadataById(randomSong);
+                console.log(songMetadata);
+
+                // set appripriate headers fror mp3 files
+                res.set({
+                    'Content-Type': 'audio/mpeg',
+                    'Content-Disposition': `attachment; filename="song-${randomSong}.mp3"`,
+                });
+
+                // send song back
+                const stream = bucket.openDownloadStream(randomSong);
+                stream.pipe(res);
+
+            } catch (error) {
+                console.error(error);
+
+                return res.status(500).send({
+                    message : "Server Error"
+                });
+            }
         });
         
         console.log("Users API routes initialized");
