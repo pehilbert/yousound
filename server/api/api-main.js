@@ -1,5 +1,6 @@
 const auth = require("./api-auth");
 const users = require("./api-users");
+const music = require("./api-music")
 
 module.exports = {
     /*
@@ -15,5 +16,6 @@ module.exports = {
         // Initialize other API routes
         auth.initialize(app);
         users.initialize(app);
+        music.initialize(app);
     }
 }

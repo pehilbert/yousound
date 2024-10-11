@@ -21,6 +21,7 @@ app.use(express.static(path.join(__dirname, '../frontend/build')));
 // Test database connection
 console.log("Testing database connection...");
 
+
 connectToMongo()
     .then(client => {
         console.log("Connected to database!");

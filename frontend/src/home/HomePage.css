@@ -1,4 +1,6 @@
-.home-title {
-    text-align: center;
+.userSongs p {
+    text-align: left;
     margin-top: 10px;
+    padding-left: 20px;
 }
+

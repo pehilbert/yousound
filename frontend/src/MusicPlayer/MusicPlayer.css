@@ -1,0 +1,44 @@
+/* Set the overall styles for the music player container */
+.music-player {
+    position: fixed;        /* Fixes the player to the viewport */
+    bottom: 10px;             /* Aligns it to the bottom of the viewport */
+    width: 70%;           /* Makes the player full width */
+    height: 60px;          /* Fixed height for consistent sizing */
+    background-color: #bb6262; /* Set your preferred background color */
+    color: white;          /* Text color */
+    padding: 20px 10px 10px;        /* Padding for better spacing */
+    display: flex;         /* Use flexbox for layout */
+    justify-content: flex-start; /* Align items to the start */
+    align-items: center;   /* Center content vertically */
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5); /* Optional shadow for depth */
+    z-index: 1000;        /* Ensure it stays above other content */
+    border-style: solid;
+    text-align: center;
+    transform: translateX(19%);   /* Shift back by half its width to center */
+  }
+  
+  /* Triangle */
+  .triangle {
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 40px solid #ffffff;
+    cursor: pointer;
+    margin: 20px;
+  }
+  
+  /* Square */
+  .square {
+    width: 40px;
+    height: 40px;
+    background-color: #ffffff;
+    cursor: pointer;
+    margin: 20px;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
