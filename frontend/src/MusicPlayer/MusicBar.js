@@ -1,9 +1,8 @@
-import "./HomePage.css";
-import React from 'react';
+import "./MusicBar.css";
 import {useEffect, useState} from "react";
 import axios from "axios";
 
-const HomePage = () => {
+function MusicBar() {
 
     return (
         <div className="userSongs">
@@ -12,4 +11,4 @@ const HomePage = () => {
     )
 }
 
-export default HomePage;
+export default MusicBar;
