@@ -1,8 +1,8 @@
 const multer = require('multer');
-const path = require('path');
 const { ObjectId } = require('mongodb');
 const fs = require('fs');
 const dbUtil = require("../ports/database/database-util");
+const songUtil = require("../ports/database/song-util");
 
 const storage = multer.diskStorage({
     destination: './uploads/',
@@ -53,7 +53,7 @@ module.exports = {
             };
 
             try {
-                const insertedId = await dbUtil.createMp3Document('songs', songDocument, filePath);
+                const insertedId = await songUtil.createMp3Document('songs', songDocument, filePath);
                 console.log(`Song inserted with ID: ${insertedId}`);
                 fs.unlink(filePath, (err) => {
                     if (err) console.error('Error deleting temporary file:', err);
@@ -76,7 +76,7 @@ module.exports = {
         */
         app.get("/api/songs/random", async (req, res) => {
             try {
-                const songIds = await dbUtil.getAllSongIds();
+                const songIds = await songUtil.getAllSongIds();
 
                 if (!songIds || songIds.length === 0) {
                     return res.status(404).send({ message: "No songs found" });
@@ -84,7 +84,7 @@ module.exports = {
 
                 const randomIndex = Math.floor(Math.random() * songIds.length);
                 const randomSong = songIds[randomIndex];
-                const songMetadata = await dbUtil.getSongMetadataById(randomSong);
+                const songMetadata = await songUtil.getSongMetadataById(randomSong);
 
                 res.set({
                     'Content-Type': 'audio/mpeg',
@@ -94,7 +94,7 @@ module.exports = {
                     'Access-Control-Expose-Headers': 'X-Song-Title, X-Song-Description',
                 });
 
-                const stream = await dbUtil.getSongDownloadStreamById(randomSong);
+                const stream = await songUtil.getSongDownloadStreamById(randomSong);
                 stream.pipe(res);
             } catch (error) {
                 console.error(error);
