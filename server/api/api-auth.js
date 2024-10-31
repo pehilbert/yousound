@@ -1,4 +1,3 @@
-const path = require("path");
 const {authenticate} = require("../ports/auth/authentication");
 
 module.exports = {
