@@ -1,13 +1,8 @@
-const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const { ObjectId } = require('mongodb');
 const fs = require('fs');
-const { GridFSBucket } = require('mongodb');
 const dbUtil = require("../ports/database/database-util");
-const { MongoClient } = require("mongodb");
-
-require("dotenv").config({ path: path.resolve(__dirname, '../.env') });
 
 const storage = multer.diskStorage({
     destination: './uploads/',
@@ -29,8 +24,6 @@ const upload = multer({
         }
     }
 });
-
-const DB_URI = process.env.DB_URI;
 
 module.exports = {
     initialize : (app) => {
@@ -83,13 +76,10 @@ module.exports = {
         */
         app.get("/api/songs/random", async (req, res) => {
             try {
-                const client = await MongoClient.connect(DB_URI);
-                const db = client.db('yousound');
-                const songIds = await dbUtil.getAllSongIds(); 
-                const bucket = new GridFSBucket(db, { bucketName: 'songs' });
+                const songIds = await dbUtil.getAllSongIds();
 
                 if (!songIds || songIds.length === 0) {
-                    return res.status(404).send({ message: "No song IDs found" });
+                    return res.status(404).send({ message: "No songs found" });
                 }
 
                 const randomIndex = Math.floor(Math.random() * songIds.length);
@@ -104,7 +94,7 @@ module.exports = {
                     'Access-Control-Expose-Headers': 'X-Song-Title, X-Song-Description',
                 });
 
-                const stream = bucket.openDownloadStream(randomSong);
+                const stream = await dbUtil.getSongDownloadStreamById(randomSong);
                 stream.pipe(res);
             } catch (error) {
                 console.error(error);

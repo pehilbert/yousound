@@ -204,6 +204,15 @@ module.exports = {
         } finally {
             await client.close(); 
         }
+    },
+    
+    /*
+    Returns a download stream from GridFS, which can then be piped into a response object
+    */
+    getSongDownloadStreamById: async (songId) => {
+        const client = await MongoClient.connect(DB_URI);
+        const db = client.db('yousound');
+        const bucket = new GridFSBucket(db, { bucketName: 'songs' });
+        return bucket.openDownloadStream(songId);
     }
-            
 }
