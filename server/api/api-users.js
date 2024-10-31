@@ -1,4 +1,4 @@
-const dbUtil = require("../database/database-util");
+const dbUtil = require("../ports/database/database-util");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const multer = require('multer');

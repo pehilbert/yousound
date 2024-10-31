@@ -3,7 +3,7 @@ const path = require('path');
 const app = express();
 const cors = require('cors');
 const api = require("./api/api-main");
-const {connectToMongo} = require("./database/database-util");
+const {connectToMongo} = require("./ports/database/database-util");
 
 require("dotenv").config({ path: path.resolve(__dirname, './.env') });
 port = 5000;

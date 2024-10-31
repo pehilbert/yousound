@@ -4,7 +4,7 @@ const path = require('path');
 const { ObjectId } = require('mongodb');
 const fs = require('fs');
 const { GridFSBucket } = require('mongodb');
-const dbUtil = require("../database/database-util");
+const dbUtil = require("../ports/database/database-util");
 const { MongoClient } = require("mongodb");
 
 require("dotenv").config({ path: path.resolve(__dirname, '../.env') });
