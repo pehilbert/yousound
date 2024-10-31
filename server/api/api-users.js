@@ -1,20 +1,15 @@
 const dbUtil = require("../ports/database/database-util");
-const bcrypt = require("bcrypt");
-const path = require("path");
-const multer = require('multer');
+const {hashPassword, getUserCreationErrorMessage} = require("../ports/auth/authentication");
 const { ObjectId } = require('mongodb');
-require("dotenv").config({ path: path.resolve(__dirname, '../.env') });
-const upload = multer();
 
-  
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, '../.env') });
+
 const DB_URI = process.env.DB_URI;
 
 
 module.exports = {
     initialize : (app) => {
-        //require("dotenv").config({ path: path.resolve(__dirname, '../.env') });
-        const SALT_ROUNDS = process.env.SALT_ROUNDS;
-
         /*
         Endpoint: POST /api/users/create
         Description: Creates a new user in the database and responds with
@@ -35,19 +30,18 @@ module.exports = {
         500 - Server Error
             {message}
         */
-        app.post("/api/users/create",upload.single('selectedFile'), async (req, res) => {
+        app.post("/api/users/create", async (req, res) => {
             if (!req.body.username || 
                 !req.body.password || 
                 !req.body.email) {
-                    console.log("Not all values provided in body: " + req.body);
-                    return res.status(400).send({
-                        message : "Missing required value(s)"
-                    });
-                }
+                console.log("Not all values provided in body: " + req.body);
+                return res.status(400).send({
+                    message : "Missing required value(s)"
+                });
+            }
                 
-
             try {
-                let hashedPassword = await bcrypt.hash(req.body.password, parseInt(SALT_ROUNDS));
+                let hashedPassword = await hashPassword(req.body.password);
 
                 let result = await dbUtil.createDocument("users", {
                     ...req.body,
@@ -63,27 +57,17 @@ module.exports = {
                 });
             } catch (error) {
                 console.error(error);
+                let errorMessage = getUserCreationErrorMessage(error);
 
-                if (error.code === 11000) {
-                    // Handle duplicate key error
-                    if (error.keyPattern && error.keyPattern.username) {
-                        return res.status(400).send({
-                            message : "Username already in use"
-                        });
-                    } else if (error.keyPattern && error.keyPattern.email) {
-                        return res.status(400).send({
-                            message : "Email already in use"
-                        });
-                    } else {
-                        return res.status(500).send({
-                            message : "Server Error"
-                        });
-                    }
-                } else {
-                    return res.status(500).send({
-                        message : "Server Error"
+                if (errorMessage) {
+                    return res.status(400).send({
+                        message : errorMessage
                     });
                 }
+
+                return res.status(500).send({
+                    message : "Server Error"
+                });
             }
         });
 
@@ -131,9 +115,6 @@ module.exports = {
             }
         });
 
-
-        
-        
         console.log("Users API routes initialized");
     }
 

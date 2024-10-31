@@ -23,7 +23,7 @@ module.exports = {
                     return res.status(400).send({message : "Not all info provided"});
                 }
 
-                let authenticationResult = authenticate(req.body.username, req.body.password);
+                let authenticationResult = await authenticate(req.body.username, req.body.password);
 
                 if (authenticationResult) {
                     res.status(200).send({message : "Login successful!", token : authenticationResult.token, id : authenticationResult.id});
