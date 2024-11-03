@@ -2,9 +2,9 @@
 cd ~/yousound
 git pull origin main
 npm install
-cd frontend
+cd view
 npm install
-cd ../server
+cd ../backend
 npm install
 cd ..
 npm run prod

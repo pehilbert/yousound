@@ -5,18 +5,17 @@
     "multer": "^1.4.5-lts.1",
     "path": "^0.12.7",
     "react-router-dom": "^6.26.2"
-  },
-  "scripts": {
-    "start": "npm run check-env",
-    "check-env": "if-env NODE_ENV=production && npm run prod || npm run dev",
-    "prod": "npm run build && npm run server",
-    "dev": "concurrently \"npm run server\" \"npm run frontend\"",
-    "server": "node server/server.js",
-    "frontend": "npm start --prefix frontend",
-    "build": "npm run build --prefix frontend",
-    "set-prod": "cross-env NODE_ENV=production",
-    "set-dev": "cross-env NODE_ENV=development"
-  },
+  },"scripts": {
+  "start": "npm run check-env",
+  "check-env": "if-env NODE_ENV=production && npm run prod || npm run dev",
+  "prod": "npm run build && npm run server",
+  "dev": "concurrently \"npm run server\" \"npm run frontend\"",
+  "server": "node backend/server.js",
+  "frontend": "npm start --prefix view",  
+  "build": "npm run build --prefix view",  
+  "set-prod": "cross-env NODE_ENV=production",
+  "set-dev": "cross-env NODE_ENV=development"
+},
   "devDependencies": {
     "cross-env": "^7.0.3",
     "if-env": "^1.0.4"
