@@ -2,8 +2,8 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const cors = require('cors');
-const api = require("./api/api-main");
-const {connectToMongo} = require("./database/database-util");
+const api = require("./Controller/controllerMain");
+const {connectToMongo} = require("./Model/database-util");
 
 require("dotenv").config({ path: path.resolve(__dirname, './.env') });
 port = 5000;

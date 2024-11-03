@@ -1,6 +1,6 @@
-const auth = require("./api-auth");
-const users = require("./api-users");
-const music = require("./api-music")
+const auth = require("./authController");
+const users = require("./userController");
+const music = require("./songController")
 
 module.exports = {
     /*
