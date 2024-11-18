@@ -1,0 +1,38 @@
+services:
+  gateway:
+    build: ./api_gateway
+    ports:
+      - "5000:5000"
+    environment:
+      - USER_PROFILE_ENDPOINT=http://user_profile:5000
+      - LOGIN_ENDPOINT=http://login:5000
+      - SONG_ENDPOINT=http://song:5000
+  user_profile:
+    build: ./microservices/user_profile
+    environment:
+      - DB_URI=mongodb://user_profile_db:27017
+  user_profile_db:
+    image: mongo:6
+    volumes:
+      - "user_profile_data:/data/db" 
+  login:
+    build: ./microservices/login
+    environment:
+      - DB_URI=mongodb://login_db:27017
+  login_db:
+    image: mongo:6
+    volumes:
+      - "login_data:/data/db" 
+  song:
+    build: ./microservices/song
+    environment:
+      - DB_URI=mongodb://song_db:27017
+  song_db:
+    image: mongo:6
+    volumes:
+      - "song_data:/data/db" 
+
+volumes:
+  user_profile_data:
+  login_data:
+  song_data:
