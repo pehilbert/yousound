@@ -87,7 +87,7 @@ module.exports = {
             }
         });
 
-         /*
+        /*
         Endpoint: GET /api/users/profile/:id
         Description: Retrieves non-sensitive info about a user given by 
         ID in parameters

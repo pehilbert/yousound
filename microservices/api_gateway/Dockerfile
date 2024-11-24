@@ -2,7 +2,7 @@
 FROM node:18
 
 # Set the working directory inside the container
-WORKDIR /
+WORKDIR /api_gateway
 
 # Copy package files first to leverage Docker cache for dependency installation
 COPY package*.json ./

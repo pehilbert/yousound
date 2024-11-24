@@ -7,26 +7,37 @@ services:
       - USER_PROFILE_ENDPOINT=http://user_profile:5000
       - LOGIN_ENDPOINT=http://login:5000
       - SONG_ENDPOINT=http://song:5000
+    env_file: ./api_gateway/.env
   user_profile:
-    build: ./microservices/user_profile
+    build: 
+      context: ./
+      dockerfile: ./user_profile/Dockerfile
     environment:
       - DB_URI=mongodb://user_profile_db:27017
+      - DB_NAME=user_profile_db
   user_profile_db:
     image: mongo:6
     volumes:
       - "user_profile_data:/data/db" 
   login:
-    build: ./microservices/login
+    build: 
+      context: ./
+      dockerfile: ./login/Dockerfile
     environment:
       - DB_URI=mongodb://login_db:27017
+      - DB_NAME=login_db
+      - SALT_ROUNDS=10
   login_db:
     image: mongo:6
     volumes:
       - "login_data:/data/db" 
   song:
-    build: ./microservices/song
+    build: 
+      context: ./
+      dockerfile: ./song/Dockerfile 
     environment:
       - DB_URI=mongodb://song_db:27017
+      - DB_NAME=song_db
   song_db:
     image: mongo:6
     volumes:

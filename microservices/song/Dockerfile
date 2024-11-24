@@ -2,16 +2,19 @@
 FROM node:16
 
 # Set the working directory inside the container
-WORKDIR /
+WORKDIR /song
 
 # Copy package files first to leverage Docker cache for dependency installation
-COPY package*.json ./
+COPY ./song/package*.json ./
 
 # Install dependencies
 RUN npm install
 
 # Copy the rest of the application files
-COPY . .
+COPY ./song .
+
+# Get needed utilities
+COPY ./util/database-util.js ./util/database-util.js
 
 # Command to start the application
 CMD ["node", "server.js"]
