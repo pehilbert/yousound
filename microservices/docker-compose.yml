@@ -38,6 +38,7 @@ services:
     environment:
       - DB_URI=mongodb://song_db:27017
       - DB_NAME=song_db
+      - PORT=5000
   song_db:
     image: mongo:6
     volumes:

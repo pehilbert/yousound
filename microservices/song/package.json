@@ -10,7 +10,9 @@
   "description": "",
   "dependencies": {
     "api_gateway": "file:",
+    "dotenv": "^16.4.7",
     "express": "^4.21.1",
-    "mongodb": "^6.11.0"
+    "mongodb": "^6.11.0",
+    "multer": "^1.4.5-lts.1"
   }
 }

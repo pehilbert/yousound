@@ -1,7 +1,7 @@
 // General functions for database access
 // - Database connection
 // - CRUD Operations
-
+const fs = require('fs');
 const { MongoClient, GridFSBucket, ObjectId } = require('mongodb');
 
 const DB_URI = process.env.DB_URI;
